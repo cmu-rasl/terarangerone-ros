@@ -45,10 +45,10 @@ TerarangerOne::TerarangerOne()
 {
   // Get paramters
   ros::NodeHandle private_node_handle_("~");
-  private_node_handle_.param("portname", portname_, std::string("/dev/ttyUSB0"));
+  private_node_handle_.param("portname", portname_, std::string("/dev/ttyUSB2"));
 
   // Publishers
-  range_publisher_ = nh_.advertise<sensor_msgs::Range>("terarangerone", 1);
+  range_publisher_ = nh_.advertise<sensor_msgs::Range>("/range", 1);
 
   // Create serial port
   serial_port_ = new SerialPort();
@@ -124,7 +124,7 @@ void TerarangerOne::serialDataCallback(uint8_t single_character)
         int16_t range = input_buffer[1] << 8;
         range |= input_buffer[2];
 
-        if (range < 14000 && range > 200)
+        if (range < 14000 && range >= 200)
         {
           range_msg.header.stamp = ros::Time::now();
           range_msg.header.seq = seq_ctr++;
